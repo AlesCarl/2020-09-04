@@ -36,9 +36,13 @@ public class ImdbDAO {
 		}
 	}
 	
-	public List<Movie> listAllMovies(){
-		String sql = "SELECT * FROM movies";
-		List<Movie> result = new ArrayList<Movie>();
+	public List<Movie> listAllMoviesRank(){
+		
+		String sql = "select m.* "
+				+ "from movies m "
+				+ "where m.rank IS NOT NULL ";
+		
+		List<Movie> result = new ArrayList<>();
 		Connection conn = DBConnect.getConnection();
 
 		try {
@@ -74,6 +78,33 @@ public class ImdbDAO {
 				Director director = new Director(res.getInt("id"), res.getString("first_name"), res.getString("last_name"));
 				
 				result.add(director);
+			}
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Integer> getAttoriFilm (Movie m){
+		
+		String sql = " select r.`actor_id` "
+				+ "from movies m, roles r "
+				+ "where m.`id`= r.`movie_id` and m.`id`= ? "; 
+		
+		List<Integer> result = new ArrayList<>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, m.getId());
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				
+				result.add(res.getInt("r.actor_id"));
 			}
 			conn.close();
 			return result;

@@ -5,9 +5,14 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import it.polito.tdp.imdb.model.Model;
+import it.polito.tdp.imdb.model.Movie;
+import it.polito.tdp.imdb.model.MovieWeight;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,24 +43,45 @@ public class FXMLController {
     private TextField txtRank; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMovie"
-    private ComboBox<?> cmbMovie; // Value injected by FXMLLoader
+    private ComboBox<Movie> cmbMovie; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
 
+    
     @FXML
     void doCammino(ActionEvent event) {
+    	
+    	Movie mStart= this.cmbMovie.getValue(); 
+    	
+    	this.txtResult.appendText("\nRISULTATO RICORSIONE: \n "+  model.getPercorsoMovie(mStart));
+
+    	
 
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	float f= Float.parseFloat(this.txtRank.getText());
+    	model.creaGrafo(f);
+    	
+    	this.txtResult.appendText("\nGrafo creato con #vertici e #archi: "+model.getNumVerex()+" - "+model.getNumEdges());
+
+    	List<Movie> temp=  model.getVertex(); 
+    	Collections.sort(temp); 
+    	this.cmbMovie.getItems().addAll(temp); 
     	
     }
 
     @FXML
     void doGradoMax(ActionEvent event) {
+        
+    	MovieWeight mw=model.getFilmGradoMax(); 
     	
+    	
+    	this.txtResult.appendText("\nVertice Grado max: "+mw.getMovieMax());
+    	this.txtResult.appendText(" con peso: "+mw.getPesoTot());
+  
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
